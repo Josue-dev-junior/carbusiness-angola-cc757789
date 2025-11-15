@@ -94,10 +94,12 @@ export type Database = {
           created_at: string | null
           description: string
           fuel_type: string
+          has_mixero: boolean | null
           id: string
           location_city: string
           location_province: string
           mileage: number
+          mixero_commission: number | null
           model: string
           price: number
           status: string | null
@@ -112,10 +114,12 @@ export type Database = {
           created_at?: string | null
           description: string
           fuel_type: string
+          has_mixero?: boolean | null
           id?: string
           location_city: string
           location_province: string
           mileage: number
+          mixero_commission?: number | null
           model: string
           price: number
           status?: string | null
@@ -130,10 +134,12 @@ export type Database = {
           created_at?: string | null
           description?: string
           fuel_type?: string
+          has_mixero?: boolean | null
           id?: string
           location_city?: string
           location_province?: string
           mileage?: number
+          mixero_commission?: number | null
           model?: string
           price?: number
           status?: string | null
