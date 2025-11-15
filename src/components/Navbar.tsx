@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Car, Menu, X } from "lucide-react";
+import { Car, Menu, X, User } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -48,6 +48,14 @@ export const Navbar = () => {
                   }`}
                 >
                   Mensagens
+                </Link>
+                <Link
+                  to="/dashboard/profile"
+                  className={`text-sm font-medium transition-colors hover:text-primary ${
+                    isActive("/dashboard/profile") ? "text-primary" : "text-foreground/80"
+                  }`}
+                >
+                  Perfil
                 </Link>
                 <Link to="/dashboard/create">
                   <Button variant="default" size="sm">
@@ -109,6 +117,13 @@ export const Navbar = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Mensagens
+                  </Link>
+                  <Link
+                    to="/dashboard/profile"
+                    className="text-sm font-medium py-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Perfil
                   </Link>
                   <Link to="/dashboard/create" onClick={() => setMobileMenuOpen(false)}>
                     <Button variant="default" size="sm" className="w-full">

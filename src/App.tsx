@@ -11,6 +11,8 @@ import Dashboard from "./pages/Dashboard";
 import CreateListing from "./pages/CreateListing";
 import CarDetail from "./pages/CarDetail";
 import Messages from "./pages/Messages";
+import Profile from "./pages/Profile";
+import PublicProfile from "./pages/PublicProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,7 +31,9 @@ const App = () => (
             <Route path="/cars/:id" element={<CarDetail />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/create" element={<CreateListing />} />
+            <Route path="/dashboard/profile" element={<Profile />} />
             <Route path="/messages" element={<Messages />} />
+            <Route path="/profile/:id" element={<PublicProfile />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Loader2, MapPin, Fuel, Calendar, Gauge, MessageCircle, Heart } from "lucide-react";
+import { Loader2, MapPin, Fuel, Calendar, Gauge, MessageCircle, Heart, User } from "lucide-react";
 
 interface Car {
   id: string;
@@ -28,6 +29,7 @@ interface Car {
   profiles: {
     name: string;
     phone: string | null;
+    avatar_url: string | null;
   };
 }
 
@@ -59,7 +61,7 @@ const CarDetail = () => {
         .from("cars")
         .select(`
           *,
-          profiles (name, phone)
+          profiles (name, phone, avatar_url)
         `)
         .eq("id", id)
         .single();
@@ -287,12 +289,22 @@ const CarDetail = () => {
               <Card>
                 <CardContent className="p-6 space-y-3">
                   <h3 className="font-semibold">Vendedor</h3>
-                  <div>
-                    <p className="font-medium">{car.profiles.name}</p>
-                    {car.profiles.phone && (
-                      <p className="text-sm text-muted-foreground">{car.profiles.phone}</p>
-                    )}
-                  </div>
+                  <Link to={`/profile/${car.user_id}`} className="block hover:opacity-80 transition-opacity">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={car.profiles.avatar_url} />
+                        <AvatarFallback>
+                          <User className="h-6 w-6" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium">{car.profiles.name}</p>
+                        {car.profiles.phone && (
+                          <p className="text-sm text-muted-foreground">{car.profiles.phone}</p>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <MapPin className="h-4 w-4" />
                     <span>{car.location_province}, {car.location_city}</span>
