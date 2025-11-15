@@ -16,6 +16,7 @@ import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import PublicProfile from "./pages/PublicProfile";
 import AboutUs from "./pages/AboutUs";
+import Premium from "./pages/Premium";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ const App = () => {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard/create" element={<CreateListing />} />
               <Route path="/dashboard/profile" element={<Profile />} />
+              <Route path="/dashboard/premium" element={<Premium />} />
               <Route path="/messages" element={<Messages />} />
               <Route path="/profile/:id" element={<PublicProfile />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Search, Shield, MessageCircle, ArrowRight } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { PremiumUpgradeCard } from "@/components/PremiumUpgradeCard";
 import heroBanner from "@/assets/hero-banner.jpg";
 
 const Index = () => {
@@ -91,6 +92,15 @@ const Index = () => {
                 </p>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Premium Section */}
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <PremiumUpgradeCard />
           </div>
         </div>
       </section>
