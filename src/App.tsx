@@ -13,6 +13,7 @@ import CarDetail from "./pages/CarDetail";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import PublicProfile from "./pages/PublicProfile";
+import AboutUs from "./pages/AboutUs";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/cars" element={<Cars />} />
             <Route path="/cars/:id" element={<CarDetail />} />
+            <Route path="/about" element={<AboutUs />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/create" element={<CreateListing />} />
             <Route path="/dashboard/profile" element={<Profile />} />
