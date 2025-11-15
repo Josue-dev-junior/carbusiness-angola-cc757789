@@ -21,7 +21,7 @@ const carSchema = z.object({
   model: z.string().min(2, "Modelo obrigatório"),
   year: z.number().min(1900).max(new Date().getFullYear() + 1),
   price: z.number().min(1, "Preço deve ser maior que 0"),
-  mileage: z.number().min(0, "Quilometragem inválida"),
+  mileage: z.number().int("Quilometragem deve ser um número inteiro").min(0, "Quilometragem inválida"),
   fuel_type: z.string().min(1, "Tipo de combustível obrigatório"),
   location_province: z.string().min(1, "Província obrigatória"),
   location_city: z.string().min(1, "Cidade obrigatória"),
@@ -90,7 +90,7 @@ const CreateListing = () => {
         ...formData,
         year: Number(formData.year),
         price: Number(formData.price),
-        mileage: Number(formData.mileage),
+        mileage: Math.round(Number(formData.mileage)),
         has_mixero: formData.has_mixero,
         mixero_commission: formData.has_mixero && formData.mixero_commission 
           ? Number(formData.mixero_commission) 
@@ -278,6 +278,7 @@ const CreateListing = () => {
                       id="mileage"
                       name="mileage"
                       type="number"
+                      step="1"
                       placeholder="50000"
                       value={formData.mileage}
                       onChange={handleChange}
