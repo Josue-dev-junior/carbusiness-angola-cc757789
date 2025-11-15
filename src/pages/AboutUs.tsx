@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import ceoPhoto from "@/assets/ceo-photo.jpg";
+import aboutImage from "@/assets/about-us-image.ico";
 
 const AboutUs = () => {
   return (
@@ -17,8 +17,8 @@ const AboutUs = () => {
             {/* Image Section */}
             <div className="mb-12 rounded-lg overflow-hidden shadow-lg">
               <img
-                src={ceoPhoto}
-                alt="CEO Josué De Oliveira Mbala"
+                src={aboutImage}
+                alt="CarBusiness"
                 className="w-full h-auto object-cover"
               />
             </div>
