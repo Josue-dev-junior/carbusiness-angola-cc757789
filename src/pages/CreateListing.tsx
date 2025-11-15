@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
+import { ImageUploader } from "@/components/ImageUploader";
 
 const carSchema = z.object({
   title: z.string().min(5, "Título deve ter pelo menos 5 caracteres").max(100),
@@ -25,6 +26,8 @@ const carSchema = z.object({
   location_province: z.string().min(1, "Província obrigatória"),
   location_city: z.string().min(1, "Cidade obrigatória"),
   description: z.string().min(20, "Descrição deve ter pelo menos 20 caracteres").max(1000),
+  has_mixero: z.boolean(),
+  mixero_commission: z.number().min(0).max(100).optional(),
 });
 
 const CreateListing = () => {
@@ -43,8 +46,11 @@ const CreateListing = () => {
     location_province: "",
     location_city: "",
     description: "",
+    has_mixero: false,
+    mixero_commission: "",
   });
 
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const provinces = [
@@ -74,12 +80,21 @@ const CreateListing = () => {
     setIsSubmitting(true);
 
     try {
+      if (imageUrls.length === 0) {
+        toast.error("Adicione pelo menos uma imagem do carro");
+        return;
+      }
+
       // Validate form data
       const validated = carSchema.parse({
         ...formData,
         year: Number(formData.year),
         price: Number(formData.price),
         mileage: Number(formData.mileage),
+        has_mixero: formData.has_mixero,
+        mixero_commission: formData.has_mixero && formData.mixero_commission 
+          ? Number(formData.mixero_commission) 
+          : undefined,
       });
 
       // Insert car
@@ -97,11 +112,26 @@ const CreateListing = () => {
           location_province: validated.location_province,
           location_city: validated.location_city,
           description: validated.description,
+          has_mixero: validated.has_mixero,
+          mixero_commission: validated.mixero_commission,
         }])
         .select()
         .single();
 
       if (carError) throw carError;
+
+      // Insert images
+      const imageInserts = imageUrls.map((url, index) => ({
+        car_id: car.id,
+        url: url,
+        display_order: index,
+      }));
+
+      const { error: imagesError } = await supabase
+        .from("car_images")
+        .insert(imageInserts);
+
+      if (imagesError) throw imagesError;
 
       toast.success("Anúncio criado com sucesso!");
       navigate("/dashboard");
@@ -336,6 +366,63 @@ const CreateListing = () => {
                   {errors.description && (
                     <p className="text-sm text-destructive">{errors.description}</p>
                   )}
+                </div>
+
+                {/* Mixero Section */}
+                <div className="space-y-4 p-4 border rounded-lg bg-muted/50">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="has_mixero"
+                      checked={formData.has_mixero}
+                      onChange={(e) => {
+                        setFormData({ 
+                          ...formData, 
+                          has_mixero: e.target.checked,
+                          mixero_commission: e.target.checked ? formData.mixero_commission : ""
+                        });
+                      }}
+                      className="h-4 w-4"
+                    />
+                    <Label htmlFor="has_mixero" className="font-semibold">
+                      Este anúncio tem Mixero (Corretor)?
+                    </Label>
+                  </div>
+
+                  {formData.has_mixero && (
+                    <div className="space-y-2">
+                      <Label htmlFor="mixero_commission">Comissão do Mixero (%)</Label>
+                      <Input
+                        id="mixero_commission"
+                        name="mixero_commission"
+                        type="number"
+                        min="0"
+                        max="100"
+                        placeholder="Ex: 5"
+                        value={formData.mixero_commission}
+                        onChange={handleChange}
+                        className={errors.mixero_commission ? "border-destructive" : ""}
+                      />
+                      {errors.mixero_commission && (
+                        <p className="text-sm text-destructive">{errors.mixero_commission}</p>
+                      )}
+                      <p className="text-sm text-muted-foreground">
+                        Percentagem que o mixero receberá pela venda (0-100%)
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Images Upload */}
+                <div className="space-y-2">
+                  <Label>Imagens do Carro *</Label>
+                  <ImageUploader 
+                    onImagesChange={setImageUrls}
+                    maxImages={10}
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Adicione até 10 imagens. A primeira será a imagem principal.
+                  </p>
                 </div>
 
                 {/* Submit Button */}

@@ -41,6 +41,14 @@ export const Navbar = () => {
                 >
                   Meu Dashboard
                 </Link>
+                <Link
+                  to="/messages"
+                  className={`text-sm font-medium transition-colors hover:text-primary ${
+                    isActive("/messages") ? "text-primary" : "text-foreground/80"
+                  }`}
+                >
+                  Mensagens
+                </Link>
                 <Link to="/dashboard/create">
                   <Button variant="default" size="sm">
                     Anunciar Carro
@@ -94,6 +102,13 @@ export const Navbar = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Meu Dashboard
+                  </Link>
+                  <Link
+                    to="/messages"
+                    className="text-sm font-medium py-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Mensagens
                   </Link>
                   <Link to="/dashboard/create" onClick={() => setMobileMenuOpen(false)}>
                     <Button variant="default" size="sm" className="w-full">
