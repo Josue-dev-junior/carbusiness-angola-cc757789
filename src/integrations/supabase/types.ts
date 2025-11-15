@@ -251,27 +251,39 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string | null
+          email: string | null
+          facebook_url: string | null
           id: string
+          instagram_url: string | null
           name: string
           phone: string | null
+          tiktok_url: string | null
           updated_at: string | null
           verified: boolean | null
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string | null
+          email?: string | null
+          facebook_url?: string | null
           id: string
+          instagram_url?: string | null
           name: string
           phone?: string | null
+          tiktok_url?: string | null
           updated_at?: string | null
           verified?: boolean | null
         }
         Update: {
           avatar_url?: string | null
           created_at?: string | null
+          email?: string | null
+          facebook_url?: string | null
           id?: string
+          instagram_url?: string | null
           name?: string
           phone?: string | null
+          tiktok_url?: string | null
           updated_at?: string | null
           verified?: boolean | null
         }
