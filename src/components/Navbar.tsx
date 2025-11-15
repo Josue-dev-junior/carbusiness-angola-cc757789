@@ -75,6 +75,14 @@ export const Navbar = () => {
                 >
                   Perfil
                 </Link>
+                <Link
+                  to="/dashboard/premium"
+                  className={`text-sm font-medium transition-colors hover:text-primary ${
+                    isActive("/dashboard/premium") ? "text-primary" : "text-foreground/80"
+                  }`}
+                >
+                  Premium
+                </Link>
                 <Link to="/dashboard/create">
                   <Button variant="default" size="sm">
                     Anunciar Carro

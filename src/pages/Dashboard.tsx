@@ -9,6 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Plus, Car, Eye, MessageSquare, Crown } from "lucide-react";
 import { CarCard } from "@/components/CarCard";
 import { PremiumUpgradeCard } from "@/components/PremiumUpgradeCard";
+import { PremiumReminderModal } from "@/components/PremiumReminderModal";
+import { usePremiumReminder } from "@/hooks/usePremiumReminder";
 import { useToast } from "@/hooks/use-toast";
 
 interface DashboardStats {
@@ -38,6 +40,7 @@ const Dashboard = () => {
   const { user, loading: authLoading, isPremium, checkSubscription } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { showReminder, dismissReminder } = usePremiumReminder();
   const [stats, setStats] = useState<DashboardStats>({
     totalCars: 0,
     activeCars: 0,
@@ -129,6 +132,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
+      <PremiumReminderModal open={showReminder} onOpenChange={dismissReminder} />
 
       <div className="flex-1 bg-background">
         <div className="container mx-auto px-4 py-8">
