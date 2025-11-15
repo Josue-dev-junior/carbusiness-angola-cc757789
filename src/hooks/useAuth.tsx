@@ -11,6 +11,9 @@ interface AuthContextType {
   signUp: (email: string, password: string, name: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   loading: boolean;
+  isPremium: boolean;
+  premiumExpiresAt: string | null;
+  checkSubscription: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -19,7 +22,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isPremium, setIsPremium] = useState(false);
+  const [premiumExpiresAt, setPremiumExpiresAt] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const checkSubscription = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('check-subscription');
+      if (error) throw error;
+      
+      setIsPremium(data?.subscribed || false);
+      setPremiumExpiresAt(data?.subscription_end || null);
+      
+      console.log('Subscription checked:', data);
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+    }
+  };
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -28,6 +49,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        if (session?.user) {
+          checkSubscription();
+        }
       }
     );
 
@@ -36,10 +61,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      
+      if (session?.user) {
+        checkSubscription();
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    
+    const interval = setInterval(() => {
+      checkSubscription();
+    }, 60000);
+    
+    return () => clearInterval(interval);
+  }, [user]);
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
@@ -82,7 +121,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, signIn, signUp, signOut, loading }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      session, 
+      signIn, 
+      signUp, 
+      signOut, 
+      loading,
+      isPremium,
+      premiumExpiresAt,
+      checkSubscription 
+    }}>
       {children}
     </AuthContext.Provider>
   );

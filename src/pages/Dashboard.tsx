@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { Navigate, Link } from "react-router-dom";
+import { Navigate, Link, useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Plus, Car, Eye, MessageSquare } from "lucide-react";
+import { Loader2, Plus, Car, Eye, MessageSquare, Crown } from "lucide-react";
 import { CarCard } from "@/components/CarCard";
+import { PremiumUpgradeCard } from "@/components/PremiumUpgradeCard";
+import { useToast } from "@/hooks/use-toast";
 
 interface DashboardStats {
   totalCars: number;
@@ -33,7 +35,9 @@ interface UserCar {
 }
 
 const Dashboard = () => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, isPremium, checkSubscription } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [stats, setStats] = useState<DashboardStats>({
     totalCars: 0,
     activeCars: 0,
@@ -48,6 +52,25 @@ const Dashboard = () => {
       fetchDashboardData();
     }
   }, [user]);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('premium') === 'success') {
+      toast({
+        title: "Upgrade realizado com sucesso!",
+        description: "Sua conta Premium foi ativada. Atualizando informações...",
+      });
+      checkSubscription();
+      navigate('/dashboard', { replace: true });
+    } else if (urlParams.get('premium') === 'cancelled') {
+      toast({
+        title: "Upgrade cancelado",
+        description: "O processo de upgrade foi cancelado.",
+        variant: "destructive",
+      });
+      navigate('/dashboard', { replace: true });
+    }
+  }, []);
 
   const fetchDashboardData = async () => {
     if (!user) return;
@@ -112,8 +135,13 @@ const Dashboard = () => {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Meu Dashboard</h1>
-              <p className="text-muted-foreground">Gerencie seus anúncios e visualize estatísticas</p>
+              <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
+                Meu Dashboard
+                {isPremium && <Crown className="h-6 w-6 text-primary" />}
+              </h1>
+              <p className="text-muted-foreground">
+                {isPremium ? "Conta Premium ativa" : "Gerencie seus anúncios e visualize estatísticas"}
+              </p>
             </div>
             <Link to="/dashboard/create">
               <Button size="lg" className="mt-4 md:mt-0">
@@ -122,6 +150,12 @@ const Dashboard = () => {
               </Button>
             </Link>
           </div>
+
+          {!isPremium && (
+            <div className="mb-8">
+              <PremiumUpgradeCard onUpgrade={checkSubscription} />
+            </div>
+          )}
 
           {loading ? (
             <div className="flex items-center justify-center py-20">
