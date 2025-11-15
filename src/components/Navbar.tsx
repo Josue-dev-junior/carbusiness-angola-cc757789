@@ -31,6 +31,14 @@ export const Navbar = () => {
             >
               Ver Carros
             </Link>
+            <Link
+              to="/about"
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                isActive("/about") ? "text-primary" : "text-foreground/80"
+              }`}
+            >
+              Sobre Nós
+            </Link>
             {user ? (
               <>
                 <Link
@@ -101,6 +109,13 @@ export const Navbar = () => {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Ver Carros
+              </Link>
+              <Link
+                to="/about"
+                className="text-sm font-medium py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Sobre Nós
               </Link>
               {user ? (
                 <>
