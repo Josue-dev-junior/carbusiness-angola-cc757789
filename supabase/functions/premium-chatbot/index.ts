@@ -11,27 +11,52 @@ serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json();
+    const { messages, userEmail, fileUrl } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY not configured");
     }
 
+    // Check if user uploaded payment proof (fileUrl provided)
+    if (fileUrl) {
+      // Generate 6-digit activation code
+      const activationCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      
+      // Store activation code in database (this would need to be implemented with proper Supabase client)
+      // For now, we'll return the code directly
+      
+      const codeMessage = `✅ Comprovativo recebido com sucesso!
+
+Seu código de ativação Premium: ${activationCode}
+
+⚠️ IMPORTANTE: Não partilhe seu código secreto com mais ninguém, caso isso aconteça a sua conta será desativada e você perderá o acesso à conta.
+
+Use este código para ativar seu plano Premium agora mesmo!`;
+
+      return new Response(JSON.stringify({
+        choices: [{
+          message: {
+            content: codeMessage
+          }
+        }]
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const systemPrompt = `Você é um assistente profissional de pagamento da CarBusiness.
 
 INSTRUÇÕES IMPORTANTES:
-1. Primeiro, cumprimente o usuário e explique o processo de pagamento
-2. Informe o número da conta Express: 922600720
+1. Cumprimente o usuário de forma profissional
+2. Explique o processo de pagamento completo:
+   - Conta Express: 922600720
+   - Valor: 9.999,00 Kz/mês
 3. Solicite que o usuário envie:
-   - Comprovativo de transferência (em PDF)
-   - Número da transação
-4. Após receber as informações, confirme o recebimento
-5. Informe que as informações foram enviadas para validação
-6. Informe que o processo de confirmação leva até 90 minutos
-7. Após confirmação, você receberá um código de 6 dígitos para ativar o Premium
-
-Valor do plano: 9.999,00 Kz/mês
+   - Comprovativo de transferência em PDF (use o botão "Enviar Comprovativo")
+   - Número da transação (digite no campo de mensagem)
+4. Após receber o comprovativo, você irá gerar automaticamente um código de ativação de 6 dígitos
+5. O usuário deve usar esse código para liberar o acesso Premium
 
 Seja profissional, claro e educado. Não invente informações.`;
 
