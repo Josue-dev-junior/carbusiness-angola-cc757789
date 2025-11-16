@@ -37,6 +37,7 @@ interface UserCar {
   profiles: {
     name: string;
     is_premium: boolean;
+    verified: boolean;
   };
 }
 
@@ -89,7 +90,7 @@ const Dashboard = () => {
         .select(`
           *,
           car_images (url),
-          profiles (name, is_premium)
+          profiles (name, is_premium, verified)
         `)
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
@@ -235,7 +236,7 @@ const Dashboard = () => {
                         imageUrl={car.car_images[0]?.url}
                         status={car.status}
                         sellerName={car.profiles?.name}
-                        sellerIsPremium={car.profiles?.is_premium}
+                        sellerIsVerified={car.profiles?.verified}
                       />
                     ))}
                   </div>

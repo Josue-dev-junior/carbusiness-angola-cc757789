@@ -31,6 +31,7 @@ interface Car {
     phone: string | null;
     avatar_url: string | null;
     is_premium: boolean;
+    verified: boolean;
   };
 }
 
@@ -62,7 +63,7 @@ const CarDetail = () => {
         .from("cars")
         .select(`
           *,
-          profiles (name, phone, avatar_url, is_premium)
+          profiles (name, phone, avatar_url, is_premium, verified)
         `)
         .eq("id", id)
         .single();
@@ -301,7 +302,7 @@ const CarDetail = () => {
                       <div>
                         <div className="flex items-center gap-2">
                           <p className="font-medium">{car.profiles.name}</p>
-                          {car.profiles.is_premium && (
+                          {car.profiles.verified && (
                             <BadgeCheck className="h-5 w-5 text-blue-500 fill-blue-500" />
                           )}
                         </div>

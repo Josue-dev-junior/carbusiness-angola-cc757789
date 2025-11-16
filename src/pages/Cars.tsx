@@ -25,6 +25,7 @@ interface Car {
   profiles: {
     name: string;
     is_premium: boolean;
+    verified: boolean;
   };
 }
 
@@ -47,7 +48,7 @@ const Cars = () => {
         .select(`
           *,
           car_images (url),
-          profiles (name, is_premium)
+          profiles (name, is_premium, verified)
         `)
         .eq("status", "active");
 
@@ -192,7 +193,7 @@ const Cars = () => {
                   imageUrl={car.car_images[0]?.url}
                   status={car.status}
                   sellerName={car.profiles?.name}
-                  sellerIsPremium={car.profiles?.is_premium}
+                  sellerIsVerified={car.profiles?.verified}
                 />
               ))}
             </div>
