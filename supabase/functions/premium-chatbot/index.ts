@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, userEmail, fileUrl } = await req.json();
+    const { messages, userEmail, fileUrl, userId } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -19,20 +20,42 @@ serve(async (req) => {
     }
 
     // Check if user uploaded payment proof (fileUrl provided)
-    if (fileUrl) {
+    if (fileUrl && userId) {
+      // Initialize Supabase client
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
       // Generate 6-digit activation code
       const activationCode = Math.random().toString(36).substring(2, 8).toUpperCase();
       
-      // Store activation code in database (this would need to be implemented with proper Supabase client)
-      // For now, we'll return the code directly
-      
+      // Store activation code in database
+      const expiresAt = new Date();
+      expiresAt.setHours(expiresAt.getHours() + 24); // Expires in 24 hours
+
+      const { error: insertError } = await supabase
+        .from('activation_codes')
+        .insert({
+          code: activationCode,
+          user_id: userId,
+          payment_proof_url: fileUrl,
+          status: 'pending',
+          expires_at: expiresAt.toISOString()
+        });
+
+      if (insertError) {
+        console.error('Error storing activation code:', insertError);
+        throw new Error('Failed to store activation code');
+      }
+
       const codeMessage = `✅ Comprovativo recebido com sucesso!
 
 Seu código de ativação Premium: ${activationCode}
 
 ⚠️ IMPORTANTE: Não partilhe seu código secreto com mais ninguém, caso isso aconteça a sua conta será desativada e você perderá o acesso à conta.
 
-Use este código para ativar seu plano Premium agora mesmo!`;
+Deseja ativar seu plano Premium agora?
+[SHOW_ACTIVATION_BUTTON]`;
 
       return new Response(JSON.stringify({
         choices: [{

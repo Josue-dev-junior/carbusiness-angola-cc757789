@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Check, Crown } from "lucide-react";
 import { useState } from "react";
 import { PremiumChatbot } from "./PremiumChatbot";
+import { ActivationCodeInput } from "./ActivationCodeInput";
 import { useAuth } from "@/hooks/useAuth";
 
 interface PremiumUpgradeCardProps {
@@ -13,6 +14,7 @@ interface PremiumUpgradeCardProps {
 
 export const PremiumUpgradeCard = ({ isPremium = false, onUpgrade }: PremiumUpgradeCardProps) => {
   const [showChatbot, setShowChatbot] = useState(false);
+  const [showActivation, setShowActivation] = useState(false);
   const { user } = useAuth();
 
   const benefits = [
@@ -33,7 +35,29 @@ export const PremiumUpgradeCard = ({ isPremium = false, onUpgrade }: PremiumUpgr
         <PremiumChatbot 
           onClose={() => setShowChatbot(false)} 
           userEmail={user.email}
+          onActivate={() => {
+            setShowChatbot(false);
+            setShowActivation(true);
+          }}
         />
+      )}
+
+      {showActivation && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background rounded-lg p-6 max-w-md w-full">
+            <ActivationCodeInput onSuccess={() => {
+              setShowActivation(false);
+              onUpgrade();
+            }} />
+            <Button 
+              variant="ghost" 
+              onClick={() => setShowActivation(false)}
+              className="w-full mt-4"
+            >
+              Fechar
+            </Button>
+          </div>
+        </div>
       )}
 
       {isPremium ? (

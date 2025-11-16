@@ -14,13 +14,15 @@ interface Message {
 interface PremiumChatbotProps {
   onClose: () => void;
   userEmail: string;
+  onActivate: () => void;
 }
 
-export const PremiumChatbot = ({ onClose, userEmail }: PremiumChatbotProps) => {
+export const PremiumChatbot = ({ onClose, userEmail, onActivate }: PremiumChatbotProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+  const [showActivateButton, setShowActivateButton] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -103,15 +105,23 @@ export const PremiumChatbot = ({ onClose, userEmail }: PremiumChatbotProps) => {
         body: { 
           messages: [...messages, userMessage],
           userEmail,
-          fileUrl: publicUrl
+          fileUrl: publicUrl,
+          userId: user.id
         },
       });
 
       if (error) throw error;
 
+      const assistantContent = chatData.choices[0].message.content;
+      
+      // Check if should show activation button
+      if (assistantContent.includes('[SHOW_ACTIVATION_BUTTON]')) {
+        setShowActivateButton(true);
+      }
+
       const assistantMessage: Message = {
         role: "assistant",
-        content: chatData.choices[0].message.content,
+        content: assistantContent.replace('[SHOW_ACTIVATION_BUTTON]', ''),
       };
 
       setMessages(prev => [...prev, assistantMessage]);
@@ -205,8 +215,19 @@ export const PremiumChatbot = ({ onClose, userEmail }: PremiumChatbotProps) => {
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="p-4 border-t">
-          <div className="flex gap-2 mb-2">
+        <div className="p-4 border-t space-y-2">
+          {showActivateButton && (
+            <Button
+              onClick={() => {
+                onClose();
+                onActivate();
+              }}
+              className="w-full"
+            >
+              Ativar Plano Premium Agora
+            </Button>
+          )}
+          <div className="flex gap-2">
             <input
               ref={fileInputRef}
               type="file"
