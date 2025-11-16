@@ -34,6 +34,9 @@ export const Footer = () => {
               <Link to="/auth?mode=signup" className="opacity-90 hover:opacity-100 hover:text-accent transition-colors">
                 Cadastrar
               </Link>
+              <Link to="/admin/login" className="opacity-70 hover:opacity-100 hover:text-accent transition-colors text-xs mt-2">
+                Acesso Admin
+              </Link>
             </div>
           </div>
 

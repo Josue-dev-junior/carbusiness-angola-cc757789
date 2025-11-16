@@ -114,6 +114,7 @@ const CreateListing = () => {
           description: validated.description,
           has_mixero: validated.has_mixero,
           mixero_commission: validated.mixero_commission,
+          status: 'pending' // Anúncio aguardando aprovação administrativa
         }])
         .select()
         .single();
@@ -133,7 +134,10 @@ const CreateListing = () => {
 
       if (imagesError) throw imagesError;
 
-      toast.success("Anúncio criado com sucesso!");
+      toast.success(
+        "Anúncio criado com sucesso! Aguarde a aprovação da equipe de moderação.",
+        { duration: 5000 }
+      );
       navigate("/dashboard");
     } catch (error) {
       if (error instanceof z.ZodError) {
