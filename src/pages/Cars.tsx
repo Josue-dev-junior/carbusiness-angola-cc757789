@@ -22,6 +22,10 @@ interface Car {
   location_city: string;
   status: string;
   car_images: { url: string }[];
+  profiles: {
+    name: string;
+    is_premium: boolean;
+  };
 }
 
 const Cars = () => {
@@ -42,7 +46,8 @@ const Cars = () => {
         .from("cars")
         .select(`
           *,
-          car_images (url)
+          car_images (url),
+          profiles (name, is_premium)
         `)
         .eq("status", "active");
 
@@ -58,7 +63,7 @@ const Cars = () => {
       const { data, error } = await query;
 
       if (error) throw error;
-      setCars(data || []);
+      setCars(data as any || []);
     } catch (error) {
       console.error("Error fetching cars:", error);
     } finally {
@@ -186,6 +191,8 @@ const Cars = () => {
                   location={`${car.location_city}, ${car.location_province}`}
                   imageUrl={car.car_images[0]?.url}
                   status={car.status}
+                  sellerName={car.profiles?.name}
+                  sellerIsPremium={car.profiles?.is_premium}
                 />
               ))}
             </div>

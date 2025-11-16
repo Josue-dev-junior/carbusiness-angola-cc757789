@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Loader2, MapPin, Fuel, Calendar, Gauge, MessageCircle, Heart, User } from "lucide-react";
+import { Loader2, MapPin, Fuel, Calendar, Gauge, MessageCircle, Heart, User, BadgeCheck } from "lucide-react";
 
 interface Car {
   id: string;
@@ -30,6 +30,7 @@ interface Car {
     name: string;
     phone: string | null;
     avatar_url: string | null;
+    is_premium: boolean;
   };
 }
 
@@ -61,7 +62,7 @@ const CarDetail = () => {
         .from("cars")
         .select(`
           *,
-          profiles (name, phone, avatar_url)
+          profiles (name, phone, avatar_url, is_premium)
         `)
         .eq("id", id)
         .single();
@@ -298,7 +299,12 @@ const CarDetail = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-medium">{car.profiles.name}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium">{car.profiles.name}</p>
+                          {car.profiles.is_premium && (
+                            <BadgeCheck className="h-5 w-5 text-blue-500 fill-blue-500" />
+                          )}
+                        </div>
                         {car.profiles.phone && (
                           <p className="text-sm text-muted-foreground">{car.profiles.phone}</p>
                         )}
