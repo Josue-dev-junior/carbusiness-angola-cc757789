@@ -109,7 +109,7 @@ const PublicProfile = () => {
                     <h2 className="text-2xl font-bold">
                       {profile.name}
                     </h2>
-                    {profile.is_premium && (
+                    {profile.verified && (
                       <BadgeCheck className="h-7 w-7 text-blue-500 fill-blue-500" />
                     )}
                   </div>

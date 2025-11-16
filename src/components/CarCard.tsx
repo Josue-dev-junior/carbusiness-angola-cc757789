@@ -16,7 +16,7 @@ interface CarCardProps {
   imageUrl?: string;
   status?: string;
   sellerName?: string;
-  sellerIsPremium?: boolean;
+  sellerIsVerified?: boolean;
 }
 
 export const CarCard = ({
@@ -32,7 +32,7 @@ export const CarCard = ({
   imageUrl,
   status = "active",
   sellerName,
-  sellerIsPremium = false,
+  sellerIsVerified = false,
 }: CarCardProps) => {
   const formatPrice = (value: number) => {
     return new Intl.NumberFormat("pt-AO", {
@@ -76,7 +76,7 @@ export const CarCard = ({
             <p className="text-sm text-muted-foreground">
               {brand} {model}
             </p>
-            {sellerIsPremium && sellerName && (
+            {sellerIsVerified && sellerName && (
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <span>•</span>
                 <span>{sellerName}</span>
