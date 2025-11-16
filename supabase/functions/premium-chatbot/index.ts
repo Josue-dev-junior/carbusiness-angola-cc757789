@@ -12,52 +12,36 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, userEmail, fileUrl, userId } = await req.json();
+    const { messages, userEmail } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY not configured");
     }
 
-    // Check if user uploaded payment proof (fileUrl provided)
-    if (fileUrl && userId) {
-      // Use fixed activation code for all users
-      const activationCode = "121712";
+    const systemPrompt = `Você é um assistente de suporte para o CarBusiness, uma plataforma de compra e venda de carros em Angola.
+    
+Sua função é ajudar usuários com dúvidas sobre o site, incluindo:
 
-      const codeMessage = `✅ Comprovativo recebido com sucesso!
+1. Como criar e gerenciar anúncios de carros
+2. Como pesquisar e filtrar carros disponíveis
+3. Como entrar em contato com vendedores
+4. Como configurar e editar o perfil
+5. Como funciona o sistema de mensagens
+6. Informações sobre os planos (Gratuito e Premium)
+7. Como usar as diferentes funcionalidades do site
 
-Seu código de ativação Premium: ${activationCode}
+Benefícios do Plano Premium:
+- Contato via WhatsApp entre negociadores
+- Assistência técnica com chatbot 24/7
+- Selo de verificação azul
+- Alcance 5x maior dos anúncios
+- Gratificação de 1.000,00kz para +10k seguidores
+- Preço: 9.999,00kz/mês
 
-⚠️ IMPORTANTE: Não partilhe seu código secreto com mais ninguém, caso isso aconteça a sua conta será desativada e você perderá o acesso à conta.
+Se o usuário quiser fazer upgrade para Premium, informe que deve clicar no botão "Fazer Upgrade" que o redirecionará para o WhatsApp do suporte: +244922600720
 
-Deseja ativar seu plano Premium agora?
-[SHOW_ACTIVATION_BUTTON]`;
-
-      return new Response(JSON.stringify({
-        choices: [{
-          message: {
-            content: codeMessage
-          }
-        }]
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const systemPrompt = `Você é um assistente profissional de pagamento da CarBusiness.
-
-INSTRUÇÕES IMPORTANTES:
-1. Cumprimente o usuário de forma profissional
-2. Explique o processo de pagamento completo:
-   - Conta Express: 922600720
-   - Valor: 9.999,00 Kz/mês
-3. Solicite que o usuário envie:
-   - Comprovativo de transferência em PDF (use o botão "Enviar Comprovativo")
-   - Número da transação (digite no campo de mensagem)
-4. Após receber o comprovativo, você irá gerar automaticamente um código de ativação de 6 dígitos
-5. O usuário deve usar esse código para liberar o acesso Premium
-
-Seja profissional, claro e educado. Não invente informações.`;
+Seja profissional, prestativo e claro em suas respostas. Foque em ajudar o usuário a usar o site da melhor forma possível.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
