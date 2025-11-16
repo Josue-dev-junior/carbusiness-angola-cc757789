@@ -21,32 +21,8 @@ serve(async (req) => {
 
     // Check if user uploaded payment proof (fileUrl provided)
     if (fileUrl && userId) {
-      // Initialize Supabase client
-      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-      const supabase = createClient(supabaseUrl, supabaseKey);
-
-      // Generate 6-digit activation code
-      const activationCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-      
-      // Store activation code in database
-      const expiresAt = new Date();
-      expiresAt.setHours(expiresAt.getHours() + 24); // Expires in 24 hours
-
-      const { error: insertError } = await supabase
-        .from('activation_codes')
-        .insert({
-          code: activationCode,
-          user_id: userId,
-          payment_proof_url: fileUrl,
-          status: 'pending',
-          expires_at: expiresAt.toISOString()
-        });
-
-      if (insertError) {
-        console.error('Error storing activation code:', insertError);
-        throw new Error('Failed to store activation code');
-      }
+      // Use fixed activation code for all users
+      const activationCode = "121712";
 
       const codeMessage = `✅ Comprovativo recebido com sucesso!
 
