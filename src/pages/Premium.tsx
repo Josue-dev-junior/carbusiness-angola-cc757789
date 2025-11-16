@@ -1,39 +1,11 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PremiumUpgradeCard } from "@/components/PremiumUpgradeCard";
+import { ActivationCodeInput } from "@/components/ActivationCodeInput";
 import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
 
 const Premium = () => {
   const { isPremium, checkSubscription } = useAuth();
-  const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleManageSubscription = async () => {
-    try {
-      setIsLoading(true);
-      const { data, error } = await supabase.functions.invoke('customer-portal');
-      
-      if (error) throw error;
-      
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
-    } catch (error) {
-      console.error('Error opening customer portal:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível abrir o portal de gerenciamento. Tente novamente.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -51,23 +23,9 @@ const Premium = () => {
 
             <PremiumUpgradeCard isPremium={isPremium} onUpgrade={checkSubscription} />
 
-            {isPremium && (
+            {!isPremium && (
               <div className="mt-6">
-                <Button 
-                  onClick={handleManageSubscription}
-                  variant="outline"
-                  disabled={isLoading}
-                  className="w-full"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Carregando...
-                    </>
-                  ) : (
-                    "Gerenciar Assinatura"
-                  )}
-                </Button>
+                <ActivationCodeInput onSuccess={checkSubscription} />
               </div>
             )}
           </div>
