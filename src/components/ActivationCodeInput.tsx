@@ -39,7 +39,8 @@ export const ActivationCodeInput = ({ onSuccess }: ActivationCodeInputProps) => 
       if (result.success) {
         toast({
           title: "Premium Ativado!",
-          description: "Sua conta Premium foi ativada com sucesso.",
+          description: "Parabéns! Sua conta Premium está ativada. Seus dados de pagamento estão em análise pela nossa comunidade (leva no máximo 1 hora). Se posteriormente descobrirmos que não fez o pagamento, iremos bloquear seu acesso e sua conta também. Evite Fraudes.",
+          duration: 10000,
         });
         onSuccess();
       } else {
