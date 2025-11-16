@@ -1,10 +1,6 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Crown, X } from "lucide-react";
-import { useState } from "react";
-import { PremiumChatbot } from "./PremiumChatbot";
-import { ActivationCodeInput } from "./ActivationCodeInput";
-import { useAuth } from "@/hooks/useAuth";
 
 interface PremiumReminderModalProps {
   open: boolean;
@@ -12,49 +8,12 @@ interface PremiumReminderModalProps {
 }
 
 export const PremiumReminderModal = ({ open, onOpenChange }: PremiumReminderModalProps) => {
-  const [showChatbot, setShowChatbot] = useState(false);
-  const [showActivation, setShowActivation] = useState(false);
-  const { user } = useAuth();
-
   const handleUpgrade = () => {
-    setShowChatbot(true);
+    window.open('https://wa.me/244922600720?text=Olá, gostaria de fazer upgrade para Premium', '_blank');
   };
 
   return (
-    <>
-      {showChatbot && user?.email && (
-        <PremiumChatbot 
-          onClose={() => {
-            setShowChatbot(false);
-            onOpenChange(false);
-          }} 
-          userEmail={user.email}
-          onActivate={() => {
-            setShowChatbot(false);
-            setShowActivation(true);
-          }}
-        />
-      )}
-
-      {showActivation && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-background rounded-lg p-6 max-w-md w-full">
-            <ActivationCodeInput onSuccess={() => {
-              setShowActivation(false);
-              onOpenChange(false);
-            }} />
-            <Button 
-              variant="ghost" 
-              onClick={() => setShowActivation(false)}
-              className="w-full mt-4"
-            >
-              Fechar
-            </Button>
-          </div>
-        </div>
-      )}
-      
-      <Dialog open={open && !showChatbot} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -112,6 +71,5 @@ export const PremiumReminderModal = ({ open, onOpenChange }: PremiumReminderModa
         </div>
       </DialogContent>
     </Dialog>
-    </>
   );
 };
