@@ -34,6 +34,10 @@ interface UserCar {
   status: string;
   views_count: number;
   car_images: { url: string }[];
+  profiles: {
+    name: string;
+    is_premium: boolean;
+  };
 }
 
 const Dashboard = () => {
@@ -84,14 +88,15 @@ const Dashboard = () => {
         .from("cars")
         .select(`
           *,
-          car_images (url)
+          car_images (url),
+          profiles (name, is_premium)
         `)
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
       if (carsError) throw carsError;
 
-      setUserCars(cars || []);
+      setUserCars(cars as any || []);
 
       // Calculate stats
       const totalCars = cars?.length || 0;
@@ -229,6 +234,8 @@ const Dashboard = () => {
                         location={`${car.location_city}, ${car.location_province}`}
                         imageUrl={car.car_images[0]?.url}
                         status={car.status}
+                        sellerName={car.profiles?.name}
+                        sellerIsPremium={car.profiles?.is_premium}
                       />
                     ))}
                   </div>

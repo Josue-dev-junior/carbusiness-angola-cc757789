@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Upload, User } from "lucide-react";
+import { Loader2, Upload, User, BadgeCheck } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 
@@ -20,6 +20,7 @@ interface ProfileData {
   tiktok_url: string;
   instagram_url: string;
   avatar_url: string;
+  is_premium: boolean;
 }
 
 const Profile = () => {
@@ -36,6 +37,7 @@ const Profile = () => {
     tiktok_url: "",
     instagram_url: "",
     avatar_url: "",
+    is_premium: false,
   });
 
   useEffect(() => {
@@ -68,6 +70,7 @@ const Profile = () => {
         tiktok_url: data.tiktok_url || "",
         instagram_url: data.instagram_url || "",
         avatar_url: data.avatar_url || "",
+        is_premium: data.is_premium || false,
       });
     } catch (error) {
       console.error("Error fetching profile:", error);
@@ -156,7 +159,12 @@ const Profile = () => {
 
       <div className="flex-1 bg-background">
         <div className="container mx-auto px-4 py-8 max-w-2xl">
-          <h1 className="text-3xl font-bold mb-8">Meu Perfil</h1>
+          <div className="flex items-center gap-3 mb-8">
+            <h1 className="text-3xl font-bold">Meu Perfil</h1>
+            {profileData.is_premium && (
+              <BadgeCheck className="h-8 w-8 text-blue-500 fill-blue-500" />
+            )}
+          </div>
 
           <Card>
             <CardHeader>

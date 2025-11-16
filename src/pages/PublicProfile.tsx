@@ -4,7 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, User, Phone, Mail, Facebook, Instagram } from "lucide-react";
+import { Loader2, User, Phone, Mail, Facebook, Instagram, BadgeCheck } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,7 @@ interface PublicProfileData {
   instagram_url: string;
   tiktok_url: string;
   verified: boolean;
+  is_premium: boolean;
 }
 
 const PublicProfile = () => {
@@ -104,14 +105,14 @@ const PublicProfile = () => {
                   </AvatarFallback>
                 </Avatar>
                 <div className="text-center">
-                  <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
-                    {profile.name}
-                    {profile.verified && (
-                      <Badge variant="default" className="ml-2">
-                        Verificado
-                      </Badge>
+                  <div className="flex items-center justify-center gap-2">
+                    <h2 className="text-2xl font-bold">
+                      {profile.name}
+                    </h2>
+                    {profile.is_premium && (
+                      <BadgeCheck className="h-7 w-7 text-blue-500 fill-blue-500" />
                     )}
-                  </h2>
+                  </div>
                   <p className="text-muted-foreground mt-1">
                     {carsCount} {carsCount === 1 ? "anúncio ativo" : "anúncios ativos"}
                   </p>

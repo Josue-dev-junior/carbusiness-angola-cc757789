@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Gauge, Calendar, Fuel } from "lucide-react";
+import { MapPin, Gauge, Calendar, Fuel, BadgeCheck } from "lucide-react";
 
 interface CarCardProps {
   id: string;
@@ -15,6 +15,8 @@ interface CarCardProps {
   location: string;
   imageUrl?: string;
   status?: string;
+  sellerName?: string;
+  sellerIsPremium?: boolean;
 }
 
 export const CarCard = ({
@@ -29,6 +31,8 @@ export const CarCard = ({
   location,
   imageUrl,
   status = "active",
+  sellerName,
+  sellerIsPremium = false,
 }: CarCardProps) => {
   const formatPrice = (value: number) => {
     return new Intl.NumberFormat("pt-AO", {
@@ -68,9 +72,18 @@ export const CarCard = ({
         <CardContent className="p-4">
           {/* Title */}
           <h3 className="font-semibold text-lg mb-1 line-clamp-1">{title}</h3>
-          <p className="text-sm text-muted-foreground mb-3">
-            {brand} {model}
-          </p>
+          <div className="flex items-center gap-1 mb-3">
+            <p className="text-sm text-muted-foreground">
+              {brand} {model}
+            </p>
+            {sellerIsPremium && sellerName && (
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                <span>•</span>
+                <span>{sellerName}</span>
+                <BadgeCheck className="h-4 w-4 text-blue-500 fill-blue-500" />
+              </div>
+            )}
+          </div>
 
           {/* Price */}
           <div className="text-2xl font-bold text-primary mb-3">
