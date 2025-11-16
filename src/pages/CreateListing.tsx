@@ -115,7 +115,7 @@ const CreateListing = () => {
           description: validated.description,
           has_mixero: validated.has_mixero,
           mixero_commission: validated.mixero_commission,
-          status: 'pending' // Anúncio aguardando aprovação administrativa
+          status: 'active' // Anúncio publicado imediatamente
         }])
         .select()
         .single();
@@ -136,7 +136,7 @@ const CreateListing = () => {
       if (imagesError) throw imagesError;
 
       toast.success(
-        "Anúncio criado com sucesso! Aguarde a aprovação da equipe de moderação.",
+        "Anúncio publicado com sucesso! Já está visível para todos os visitantes.",
         { duration: 5000 }
       );
       navigate("/dashboard");
