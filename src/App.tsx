@@ -17,6 +17,8 @@ import Profile from "./pages/Profile";
 import PublicProfile from "./pages/PublicProfile";
 import AboutUs from "./pages/AboutUs";
 import Premium from "./pages/Premium";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/admin/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -55,6 +57,8 @@ const App = () => {
               <Route path="/dashboard/premium" element={<Premium />} />
               <Route path="/messages" element={<Messages />} />
               <Route path="/profile/:id" element={<PublicProfile />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
