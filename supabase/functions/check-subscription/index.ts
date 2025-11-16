@@ -16,31 +16,37 @@ serve(async (req) => {
     console.log("[CHECK-SUBSCRIPTION] Function started");
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
     // Get the authorization header from the request
     const authHeader = req.headers.get("authorization");
     if (!authHeader) {
+      console.error("[CHECK-SUBSCRIPTION] No authorization header");
       throw new Error("No authorization header");
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey, {
-      global: {
-        headers: {
-          authorization: authHeader,
+    // Create client with anon key to verify the JWT
+    const supabaseClient = createClient(
+      supabaseUrl,
+      supabaseServiceKey,
+      {
+        global: {
+          headers: {
+            authorization: authHeader,
+          },
         },
-      },
-    });
+      }
+    );
 
-    // Get the authenticated user
+    // Get the authenticated user using the JWT from the header
     const {
       data: { user },
       error: userError,
-    } = await supabase.auth.getUser();
+    } = await supabaseClient.auth.getUser(authHeader.replace("Bearer ", ""));
 
     if (userError || !user) {
       console.error("[CHECK-SUBSCRIPTION] Auth error:", userError);
-      throw new Error("Authentication error: Auth session missing!");
+      throw new Error("Authentication error: Invalid or expired token");
     }
 
     console.log("[CHECK-SUBSCRIPTION] User authenticated:", {
@@ -49,7 +55,7 @@ serve(async (req) => {
     });
 
     // Check the user's premium status in the profiles table
-    const { data: profile, error: profileError } = await supabase
+    const { data: profile, error: profileError } = await supabaseClient
       .from("profiles")
       .select("is_premium, premium_expires_at")
       .eq("id", user.id)
