@@ -16,7 +16,7 @@ serve(async (req) => {
     console.log("[CHECK-SUBSCRIPTION] Function started");
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
     // Get the authorization header from the request
     const authHeader = req.headers.get("authorization");
@@ -25,10 +25,10 @@ serve(async (req) => {
       throw new Error("No authorization header");
     }
 
-    // Create client with anon key to verify the JWT
-    const supabaseClient = createClient(
+    // Create client with anon key and pass the auth header
+    const supabase = createClient(
       supabaseUrl,
-      supabaseServiceKey,
+      supabaseAnonKey,
       {
         global: {
           headers: {
@@ -38,11 +38,11 @@ serve(async (req) => {
       }
     );
 
-    // Get the authenticated user using the JWT from the header
+    // Get the authenticated user - getUser() will use the JWT from the header
     const {
       data: { user },
       error: userError,
-    } = await supabaseClient.auth.getUser(authHeader.replace("Bearer ", ""));
+    } = await supabase.auth.getUser();
 
     if (userError || !user) {
       console.error("[CHECK-SUBSCRIPTION] Auth error:", userError);
@@ -55,11 +55,11 @@ serve(async (req) => {
     });
 
     // Check the user's premium status in the profiles table
-    const { data: profile, error: profileError } = await supabaseClient
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("is_premium, premium_expires_at")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
 
     if (profileError) {
       console.error("[CHECK-SUBSCRIPTION] Profile error:", profileError);
