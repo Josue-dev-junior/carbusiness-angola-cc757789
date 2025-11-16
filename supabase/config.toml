@@ -1,5 +1,8 @@
 project_id = "onfcgdhyaqoqxhroorjc"
 
+[functions.check-subscription]
+verify_jwt = true
+
 [functions.premium-chatbot]
 verify_jwt = true
 
