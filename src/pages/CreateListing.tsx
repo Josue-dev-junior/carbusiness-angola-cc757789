@@ -82,6 +82,7 @@ const CreateListing = () => {
     try {
       if (imageUrls.length === 0) {
         toast.error("Adicione pelo menos uma imagem do carro");
+        setIsSubmitting(false);
         return;
       }
 
@@ -148,7 +149,22 @@ const CreateListing = () => {
           }
         });
         setErrors(fieldErrors);
-        toast.error("Por favor, corrija os erros no formulário");
+        
+        // Scroll to first error field
+        setTimeout(() => {
+          const firstErrorField = Object.keys(fieldErrors)[0];
+          const element = document.getElementById(firstErrorField);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            element.focus();
+          }
+        }, 100);
+        
+        const errorCount = Object.keys(fieldErrors).length;
+        toast.error(
+          `Corrija ${errorCount} ${errorCount === 1 ? 'erro' : 'erros'} no formulário`,
+          { duration: 5000 }
+        );
       } else {
         console.error("Error creating listing:", error);
         toast.error("Erro ao criar anúncio");
@@ -358,19 +374,26 @@ const CreateListing = () => {
 
                 {/* Description */}
                 <div className="space-y-2">
-                  <Label htmlFor="description">Descrição</Label>
+                  <Label htmlFor="description">Descrição *</Label>
                   <Textarea
                     id="description"
                     name="description"
-                    placeholder="Descreva as características e condições do carro..."
+                    placeholder="Descreva as características e condições do carro... (mínimo 20 caracteres)"
                     value={formData.description}
                     onChange={handleChange}
                     rows={5}
                     className={errors.description ? "border-destructive" : ""}
                   />
-                  {errors.description && (
-                    <p className="text-sm text-destructive">{errors.description}</p>
-                  )}
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      {errors.description && (
+                        <p className="text-sm text-destructive">{errors.description}</p>
+                      )}
+                    </div>
+                    <p className={`text-xs ${formData.description.length >= 20 ? 'text-muted-foreground' : 'text-destructive'}`}>
+                      {formData.description.length}/20 caracteres
+                    </p>
+                  </div>
                 </div>
 
                 {/* Mixero Section */}
