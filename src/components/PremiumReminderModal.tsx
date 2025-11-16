@@ -1,9 +1,9 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Crown, X } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { PremiumChatbot } from "./PremiumChatbot";
+import { useAuth } from "@/hooks/useAuth";
 
 interface PremiumReminderModalProps {
   open: boolean;
@@ -11,34 +11,26 @@ interface PremiumReminderModalProps {
 }
 
 export const PremiumReminderModal = ({ open, onOpenChange }: PremiumReminderModalProps) => {
-  const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  const [showChatbot, setShowChatbot] = useState(false);
+  const { user } = useAuth();
 
-  const handleUpgrade = async () => {
-    try {
-      setIsLoading(true);
-      const { data, error } = await supabase.functions.invoke('create-checkout');
-      
-      if (error) throw error;
-      
-      if (data?.url) {
-        window.open(data.url, '_blank');
-        onOpenChange(false);
-      }
-    } catch (error) {
-      console.error('Error creating checkout:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível iniciar o processo de upgrade. Tente novamente.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  const handleUpgrade = () => {
+    setShowChatbot(true);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <>
+      {showChatbot && user?.email && (
+        <PremiumChatbot 
+          onClose={() => {
+            setShowChatbot(false);
+            onOpenChange(false);
+          }} 
+          userEmail={user.email}
+        />
+      )}
+      
+      <Dialog open={open && !showChatbot} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -82,9 +74,8 @@ export const PremiumReminderModal = ({ open, onOpenChange }: PremiumReminderModa
             <Button 
               onClick={handleUpgrade} 
               className="flex-1"
-              disabled={isLoading}
             >
-              {isLoading ? "Processando..." : "Fazer Upgrade"}
+              Fazer Upgrade
             </Button>
             <Button 
               variant="ghost" 
@@ -97,5 +88,6 @@ export const PremiumReminderModal = ({ open, onOpenChange }: PremiumReminderModa
         </div>
       </DialogContent>
     </Dialog>
+    </>
   );
 };

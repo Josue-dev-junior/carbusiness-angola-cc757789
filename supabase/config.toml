@@ -1,10 +1,7 @@
 project_id = "onfcgdhyaqoqxhroorjc"
 
-[functions.create-checkout]
+[functions.premium-chatbot]
 verify_jwt = true
 
-[functions.check-subscription]
-verify_jwt = true
-
-[functions.customer-portal]
+[functions.notify-payment]
 verify_jwt = true

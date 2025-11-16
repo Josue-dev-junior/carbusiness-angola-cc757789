@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      activation_codes: {
+        Row: {
+          activated_at: string | null
+          code: string
+          created_at: string
+          expires_at: string
+          id: string
+          payment_proof_url: string | null
+          status: string
+          transaction_number: string | null
+          user_id: string | null
+        }
+        Insert: {
+          activated_at?: string | null
+          code: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          payment_proof_url?: string | null
+          status?: string
+          transaction_number?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          activated_at?: string | null
+          code?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          payment_proof_url?: string | null
+          status?: string
+          transaction_number?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       car_images: {
         Row: {
           car_id: string
@@ -247,6 +283,30 @@ export type Database = {
           },
         ]
       }
+      premium_chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -339,7 +399,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      activate_premium_with_code: {
+        Args: { activation_code: string }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never
